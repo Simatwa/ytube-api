@@ -252,6 +252,7 @@ class Ytube:
                 start_time = time.time()
                 with open(save_to, saving_mode) as fh:
                     for chunks in resp.iter_content(chunk_size=chunk_size_in_bytes):
+                        fh.write(chunks)
                         downloaded_size_in_bytes += len(chunks)
                         text_to_display = f"> Downloaded {round(downloaded_size_in_bytes / 1_000_000, 2)} MB "
                         ellipses = "..."
