@@ -24,6 +24,7 @@ class SearchResults:
 
     query: str
     items: list[SearchResultsItem]
+    from_link: bool = False
 
 
 @dataclass

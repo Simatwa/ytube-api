@@ -19,6 +19,13 @@ import ytube_api.constants as const
 import ytube_api.models as models
 import ytube_api.exceptions as exception
 
+try:
+    import click
+
+    cli_deps_installed = True
+except ImportError:
+    cli_deps_installed = False
+
 session = create_scraper()
 
 session.headers = const.request_headers
@@ -36,6 +43,11 @@ class Ytube:
             timeout (int, optional): Http Request timeout. Defaults to 20.
         """
         self.request_timeout = timeout
+        self.video_id_patterns = (
+            r"^https://youtu.be/(\w{11}).*?",
+            r"^https://www.youtube.com/watch\?v=(\w{11})",
+            r"^(\w{11})$",
+        )
 
     def get(self, *args, **kwargs) -> Response:
         """Fetch online resource
@@ -83,9 +95,38 @@ class Ytube:
             text,
         )
 
+    def extract_video_id(self, query: str) -> None | str:
+        """Check if query contains youtube video id
+
+        Args:
+            query (str): Search query
+
+        Returns:
+            None|str: Video ID or None
+        """
+        for pattern in self.video_id_patterns:
+            if re.match(pattern, query):
+                return re.findall(pattern, query)[0]
+
     def search_video_by_title(self, query: str) -> models.SearchResults:
         """Tries to locate video by it's title"""
         assert query, "Query cannot be empty"
+        video_id_from_query = self.extract_video_id(query)
+        if video_id_from_query:
+            return models.SearchResults(
+                query=query,
+                items=list[
+                    models.SearchResultsItem(
+                        title=None,
+                        id=video_id_from_query,
+                        size=None,
+                        duration=None,
+                        channelTitle=None,
+                        source=None,
+                    )
+                ],
+                from_link=True,
+            )
         resp = self.get(const.search_video_by_title_url, params=dict(q=query))
         resp.raise_for_status()
         results = resp.json()
@@ -307,21 +348,47 @@ def Auto(
     quality: t.Literal[
         "128", "320", "144", "240", "360", "480", "720", "1080"
     ] = "128|720",
+    limit: int = 1,
+    confirm: bool = False,
+    timeout: int = 20,
     **kwargs,
-) -> Path:
+) -> Path | list[Path]:
     """Search, navigate and download first video of every results
 
     Args:
         query (str): Video title or video url
             type (t.Literal['mp3', 'mp4'], optional): Media type. Defaults to 'mp4'.
             quality (t.Literal['128',320', '144', '240', '360', '480', '720', '1080'], optional): Download quality. Defaults to '720|128'.
+            limit (int, optional): Total number of videos to handle. Defaults to 1.
+            confirm (bool, optional): Ask user permission to proceed with the download. Defaults to False.
+            timeout (int, optional): Http request timeout. Defaults to 20.
         The rest are kwargs for `Ytube.download`
     Returns:
           Path : Path where the file has been saved to
     """
-    yt = Ytube()
+    if kwargs.get("filename") and limit > 1:
+        raise RuntimeError(
+            f"Limit should be 1 when you have specified filename of the item to be downloaded."
+        )
+    yt = Ytube(timeout=timeout)
     y = yt.search_video_by_title(query)
     if not y.items:
         raise Exception(f"Your query matched zero results")
-    d = yt.get_download_link(y.items[0], type=type, quality=quality)
-    return yt.download(d, **kwargs)
+    saved_to: list[Path] = []
+    for count, item in enumerate(y.items, start=1):
+        if confirm and not y.from_link:
+            if not cli_deps_installed:
+                raise RuntimeError(
+                    f"Looks like cli dependencies are not installed. "
+                    f"Reinstall ytube-api along with cli extras ie. "
+                    "pip install ytube-api[cli]"
+                )
+            if not click.confirm(
+                f'Are you sure to download "{item.title}" by "{item.channelTitle} : [{item.duration}]"'
+            ):
+                continue
+        d = yt.get_download_link(item, type=type, quality=quality)
+        saved_to.append(yt.download(d, **kwargs))
+        if count >= limit:
+            break
+    return saved_to[0] if len(saved_to) == 1 else saved_to

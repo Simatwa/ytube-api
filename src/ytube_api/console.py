@@ -21,6 +21,20 @@ def ytube():
     "--mp4/--mp3", default=True, help="Download audio (mp3) or video (mp4) - mp4"
 )
 @click.option(
+    "-l",
+    "--limit",
+    type=click.INT,
+    help="Total number of items to be downloaded that matched the search - 1",
+    default=1,
+)
+@click.option(
+    "-t",
+    "--timeout",
+    type=click.INT,
+    help="Http request timeout - 20",
+    default=20,
+)
+@click.option(
     "-d",
     "--dir",
     help="Directory for saving the contents to - pwd.",
@@ -30,20 +44,26 @@ def ytube():
 @click.option("-o", "--output", help="Filename to save the contents under - None")
 @click.option("--quiet", is_flag=True, help="Do not stdout informative messages")
 @click.option("--resume", is_flag=True, help="Resume incomplete download")
-def download(query, quality, mp4, dir, output, quiet, resume):
+@click.option(
+    "--confirm", is_flag=True, help="Ask user for permission to download a video/audio"
+)
+def download(query, quality, mp4, limit, timeout, dir, output, quiet, resume, confirm):
     """Search and download video in mp4 or mp3 formats"""
     from ytube_api import Auto
 
     saved_to = Auto(
         query=query,
         type="mp4" if mp4 else "mp3",
+        limit=limit,
+        confirm=confirm,
         quality=quality,
+        timeout=timeout,
         filename=output,
         dir=dir,
-        quiet=quiet,
+        progress_bar=quiet,
     )
     if not quiet:
-        print(saved_to)
+        print("\n".join([str(path) for path in saved_to]) if isinstance(saved_to, list) else saved_to)
 
 
 def main():
@@ -51,5 +71,5 @@ def main():
         ytube()
     except Exception as e:
         print(
-            f"> Error occured - {e.args[1] if e.args and len(e.args)>1 else e}. \n\tQuitting"
+            f"> Error occured - {e.args[1] if e.args and len(e.args)>1 else e}. \n\tQuitting."
         )

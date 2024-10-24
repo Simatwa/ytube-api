@@ -8,6 +8,7 @@ class TestYtube(unittest.TestCase):
 
     def setUp(self):
         self.query = "happy birthday"
+        self.query_link = "https://youtu.be/Ns623Ibl5l8?si=TW2dmgUBZ3X1jusA"
         self.ytube = Ytube()
 
     def test_queries_suggestion(self):
@@ -16,6 +17,11 @@ class TestYtube(unittest.TestCase):
     def test_search_video_by_title(self):
         s = self.ytube.search_video_by_title(self.query)
         self.assertIsInstance(s, models.SearchResults)
+
+    def test_search_video_by_link(self):
+        s = self.ytube.search_video_by_title(self.query_link)
+        self.assertIsInstance(s, models.SearchResults)
+        self.assertTrue(s.from_link)
 
     def test_get_thumbail(self):
         item = self.ytube.search_video_by_title(self.query).items[0]
@@ -66,7 +72,7 @@ class TestYtube(unittest.TestCase):
         remove(saved_to)
 
     def test_auto(self):
-        saved_to = Auto(self.query)
+        saved_to = Auto(self.query, progress_bar=False)
         self.assertTrue(saved_to.exists() and saved_to.is_file())
         remove(saved_to)
 
