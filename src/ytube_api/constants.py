@@ -1,0 +1,53 @@
+"""
+This module contains strongly-typed variables
+that are fundamental to the functionality of
+Ytube package.
+"""
+
+search_video_by_title_url = "https://wwd.mp3juice.blog/search.php"
+"""Get request is made to this endpoint in searching of 
+videos by title"""
+
+suggest_queries_url = (
+    "https://suggestqueries.google.com/complete/search?hl=en&ds="
+    "yt&client=youtube&hjson=t&cp=1&q=%(query)s"
+)
+"""
+Link template to YouTube's endpoint for query suggestion
+requires `query` to be complete
+"""
+
+video_thumbnail_url = "https://i.ytimg.com/vi/%(video_id)s/0.jpg"
+"""Link template to a Youtube video thumbnail"""
+
+to_download_page_url = "https://sogv.mmnm.store/oajax.php"
+"""Post request is made to this endpoint so as to generate link
+to downloadable media file and other metadata"""
+
+video_download_qualities: tuple[str] = ("144", "240", "360", "480", "720", "1080")
+"""Video download qaulities without p"""
+
+audio_download_qualities: tuple[str] = ("128", "320")
+"""Audio download qualities without Kbps"""
+
+download_qualities: tuple[str] = tuple(
+    audio_download_qualities + video_download_qualities
+)
+"""Combined video and audio download qualities """
+
+video_download_type = "mp4"
+"""String for specifying video"""
+
+audio_download_type = "mp3"
+"""String for specifying audio"""
+
+download_types: tuple[str] = (video_download_type, audio_download_type)
+"""Combined  audio and video specifiers"""
+
+request_headers: dict[str, str] = {
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/png,image/svg+xml,*/*;q=0.8",
+    "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:129.0) Gecko/20100101 Firefox/129.0",
+    "Accept-Encoding": "gzip, deflate, br",
+    "Accept-Language": "en-US,en;q=0.9",
+}
+"""Http request headers"""
