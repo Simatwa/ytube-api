@@ -380,18 +380,18 @@ def Auto(
     for count, item in enumerate(y.items, start=1):
         if confirm and not y.from_link:
             if not cli_deps_installed:
-                raise RuntimeError(
+                raise Exception(
                     f"Looks like cli dependencies are not installed. "
                     f"Reinstall ytube-api along with cli extras ie. "
                     "pip install ytube-api[cli]"
                 )
             if not click.confirm(
-                f'> Are you sure to download {item.duration} - "{item.title}" by "{item.channelTitle} : [{count}/{len(y.items)}]"'
+                f'> Are you sure to download {item.duration} - "{item.title}" by "{item.channelTitle} ({count}/{len(y.items)})"'
             ):
                 continue
         d = yt.get_download_link(item, format=format, quality=quality)
-        print(d)
-        saved_to.append(yt.download(d, **kwargs))
-        if count >= limit:
+        saved = yt.download(d, **kwargs)
+        saved_to.append(saved)
+        if count >= limit + 1:
             break
     return saved_to[0] if len(saved_to) == 1 else saved_to

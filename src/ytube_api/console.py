@@ -22,6 +22,11 @@ def ytube():
     "--mp4/--mp3", default=True, help="Download audio (mp3) or video (mp4) - mp4"
 )
 @click.option(
+    "--enable-progressbar/--disable-progressbar",
+    default=True,
+    help="Show or hide progressbar",
+)
+@click.option(
     "-l",
     "--limit",
     type=click.INT,
@@ -48,7 +53,19 @@ def ytube():
 @click.option(
     "--confirm", is_flag=True, help="Ask user for permission to download a video/audio"
 )
-def download(query, quality, mp4, limit, timeout, dir, output, quiet, resume, confirm):
+def download(
+    query,
+    quality,
+    mp4,
+    enable_progressbar,
+    limit,
+    timeout,
+    dir,
+    output,
+    quiet,
+    resume,
+    confirm,
+):
     """Search and download video in mp4 or mp3 formats"""
     from ytube_api import Auto
 
@@ -61,7 +78,9 @@ def download(query, quality, mp4, limit, timeout, dir, output, quiet, resume, co
         timeout=timeout,
         filename=output,
         dir=dir,
-        progress_bar=quiet,
+        quiet=quiet,
+        resume=resume,
+        progress_bar=enable_progressbar,
     )
     if not quiet:
         print(
@@ -75,7 +94,6 @@ def main():
     try:
         ytube()
     except Exception as e:
-        raise e
         print(
             f"> Error occured - {e.args[1] if e.args and len(e.args)>1 else e}. \nQuitting."
         )
