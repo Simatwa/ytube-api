@@ -54,7 +54,7 @@ def download(query, quality, mp4, limit, timeout, dir, output, quiet, resume, co
 
     saved_to = Auto(
         query=query,
-        type="mp4" if mp4 else "mp3",
+        format="mp4" if mp4 else "mp3",
         limit=limit,
         confirm=confirm,
         quality=quality,

@@ -117,7 +117,7 @@ class Ytube:
         if video_id_from_query:
             return models.SearchResults(
                 query=query,
-                items=list[
+                items=[
                     models.SearchResultsItem(
                         title=None,
                         id=video_id_from_query,
@@ -359,14 +359,14 @@ def Auto(
 
     Args:
         query (str): Video title or video url
-            type (t.Literal['mp3', 'mp4'], optional): Media type. Defaults to 'mp4'.
+            format (t.Literal['mp3', 'mp4'], optional): Media type. Defaults to 'mp4'.
             quality (t.Literal['128',320', '144', '240', '360', '480', '720', '1080'], optional): Download quality. Defaults to '720|128'.
             limit (int, optional): Total number of videos to handle. Defaults to 1.
             confirm (bool, optional): Ask user permission to proceed with the download. Defaults to False.
             timeout (int, optional): Http request timeout. Defaults to 20.
         The rest are kwargs for `Ytube.download`
     Returns:
-          Path : Path where the file has been saved to
+          Path|list[Path] : Path where the file has been saved to
     """
     if kwargs.get("filename") and limit > 1:
         raise RuntimeError(
@@ -386,10 +386,11 @@ def Auto(
                     "pip install ytube-api[cli]"
                 )
             if not click.confirm(
-                f'Are you sure to download "{item.title}" by "{item.channelTitle} : [{item.duration}]"'
+                f'> Are you sure to download {item.duration} - "{item.title}" by "{item.channelTitle} : [{count}/{len(y.items)}]"'
             ):
                 continue
         d = yt.get_download_link(item, format=format, quality=quality)
+        print(d)
         saved_to.append(yt.download(d, **kwargs))
         if count >= limit:
             break

@@ -1,6 +1,6 @@
 """
 This module contains exception classes
-used across Ytube
+used across ytube-api
 """
 
 

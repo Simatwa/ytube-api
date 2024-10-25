@@ -1,7 +1,7 @@
 """
 This module contains strongly-typed variables
 that are fundamental to the functionality of
-Ytube package.
+Ytube-api package.
 """
 
 search_video_by_title_url = "https://wwd.mp3juice.blog/search.php"
