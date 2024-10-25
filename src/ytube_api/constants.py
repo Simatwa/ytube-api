@@ -4,9 +4,9 @@ that are fundamental to the functionality of
 Ytube-api package.
 """
 
-search_video_by_title_url = "https://wwd.mp3juice.blog/search.php"
+search_videos_url = "https://wwd.mp3juice.blog/search.php"
 """Get request is made to this endpoint in searching of 
-videos by title"""
+videos"""
 
 suggest_queries_url = (
     "https://suggestqueries.google.com/complete/search?hl=en&ds="
@@ -20,7 +20,7 @@ requires `query` to be complete
 video_thumbnail_url = "https://i.ytimg.com/vi/%(video_id)s/0.jpg"
 """Link template to a Youtube video thumbnail"""
 
-to_download_page_url = "https://sogv.mmnm.store/oajax.php"
+to_download_links_url = "https://sogv.mmnm.store/oajax.php"
 """Post request is made to this endpoint so as to generate link
 to downloadable media file and other metadata"""
 
@@ -35,13 +35,13 @@ download_qualities: tuple[str] = tuple(
 )
 """Combined video and audio download qualities """
 
-video_download_type = "mp4"
+video_download_format = "mp4"
 """String for specifying video"""
 
-audio_download_type = "mp3"
+audio_download_format = "mp3"
 """String for specifying audio"""
 
-download_types: tuple[str] = (video_download_type, audio_download_type)
+download_formats: tuple[str] = (video_download_format, audio_download_format)
 """Combined  audio and video specifiers"""
 
 request_headers: dict[str, str] = {

@@ -1,6 +1,6 @@
 """
-This module does all the work using `Ytube` class and 
-features `Auto` function for auto-handling the whole 
+This module does core work using `Ytube` class and
+features `Auto` function for auto-handling the whole
 process of downloading a YouTube video.
 """
 
@@ -30,26 +30,42 @@ session = create_scraper()
 
 session.headers = const.request_headers
 
-type_ = type
-
 
 class Ytube:
     """This is the sole class for searching, navigating
     and finally downloading any Youtube video of your choice.
     """
 
-    def __init__(self, timeout: int = 20):
+    def __init__(self, timeout: int = 20, spinner_index: t.Literal[0, 1, 2, 3] = 2):
         """Initializes `Search`
 
         Args:
             timeout (int, optional): Http Request timeout. Defaults to 20.
+            spinner (int, optional): Download busybar index. Defaults to 2.
         """
         self.request_timeout = timeout
         self.video_id_patterns = (
-            r"^https://youtu.be/(\w{11}).*?",
-            r"^https://www.youtube.com/watch\?v=(\w{11})",
+            r"^https://youtu.be/(\w{11}).*",
+            r"^https://www.youtube.com/watch\?v=(\w{11}).*",
+            r"^https://youtube.com/shorts/(\w{11}).*",
             r"^(\w{11})$",
         )
+        __spinner = (
+            (),
+            ("", "-", "\\", "|", "/"),
+            (
+                "",
+                "█■■■■",
+                "■█■■■",
+                "■■█■■",
+                "■■■█■",
+                "■■■■█",
+            ),
+            ("", "⣾ ", "⣽ ", "⣻ ", "⢿ ", "⡿ ", "⣟ ", "⣯ ", "⣷ "),
+        )
+        if spinner_index < 0 or spinner_index > 3:
+            raise ValueError(f"spinner_index must be >=0 or <=3 not {spinner_index}")
+        self._spinner_items = __spinner[spinner_index]
 
     def get(self, *args, **kwargs) -> Response:
         """Fetch online resource
@@ -110,8 +126,8 @@ class Ytube:
             if re.match(pattern, query):
                 return re.findall(pattern, query)[0]
 
-    def search_video_by_title(self, query: str) -> models.SearchResults:
-        """Tries to locate video by it's title"""
+    def search_videos(self, query: str) -> models.SearchResults:
+        """Tries to locate videos by title|url|id"""
         assert query, "Query cannot be empty"
         video_id_from_query = self.extract_video_id(query)
         if video_id_from_query:
@@ -129,7 +145,7 @@ class Ytube:
                 ],
                 from_link=True,
             )
-        resp = self.get(const.search_video_by_title_url, params=dict(q=query))
+        resp = self.get(const.search_videos_url, params=dict(q=query))
         resp.raise_for_status()
         results = resp.json()
         results_items: list[models.SearchResultsItem] = []
@@ -161,12 +177,11 @@ class Ytube:
             f"Item must be an instance of {models.SearchResultsItem} "
             f"not {type(item)}"
         )
-        assert format in [
-            const.audio_download_type,
-            const.video_download_type,
-        ], f"Type '{format}' is not one of {[const.audio_download_type, const.video_download_type],}"
+        assert (
+            format in const.download_formats
+        ), f"Format '{format}' is not one of {[const.audio_download_format, const.video_download_format],}"
         if quality == "128|720":
-            if format == const.audio_download_type:
+            if format == const.audio_download_format:
                 quality = "128"
             else:
                 quality = "720"
@@ -174,16 +189,16 @@ class Ytube:
             assert (
                 quality in const.download_qualities
             ), f"Quality '{quality}' is not one of {const.download_qualities}"
-            if format == const.audio_download_type:
+            if format == const.audio_download_format:
                 assert (
                     quality in const.audio_download_qualities
                 ), f"Audio quality '{quality}' is not one of {const.audio_download_qualities}"
-            if format == const.video_download_type:
+            if format == const.video_download_format:
                 assert (
                     quality in const.video_download_qualities
                 ), f"Video quality '{quality}' is not one of {const.video_download_qualities}"
         payload = dict(videoid=item.id, downtype=format, vquality=quality)
-        resp_data = self.post(const.to_download_page_url, data=payload).json()
+        resp_data = self.post(const.to_download_links_url, data=payload).json()
         if resp_data.get("status", "") == "error":
             raise exception.VideoProccessingError(
                 str(
@@ -242,6 +257,15 @@ class Ytube:
             if session.headers.get("Range"):
                 session.headers.pop("Range")
 
+        def get_busy_bar(prev):
+            if not self._spinner_items:
+                return ""
+            index_of_prev = self._spinner_items.index(prev)
+            if index_of_prev == len(self._spinner_items) - 1:
+                return self._spinner_items[1]
+            else:
+                return self._spinner_items[index_of_prev + 1]
+
         if resume:
             assert path.exists(save_to), f"File not found in path - '{save_to}'"
             current_downloaded_size = path.getsize(save_to)
@@ -293,22 +317,25 @@ class Ytube:
 
                 downloaded_size_in_bytes = 0
                 start_time = time.time()
+                busy_bar = "" if not self._spinner_items else self._spinner_items[0]
                 with open(save_to, saving_mode) as fh:
                     for chunks in resp.iter_content(chunk_size=chunk_size_in_bytes):
                         fh.write(chunks)
                         downloaded_size_in_bytes += len(chunks)
                         text_to_display = f"> Downloaded {round(downloaded_size_in_bytes / 1_000_000, 2)} MB "
-                        ellipses = "..."
                         len_of_more_text_to_display = (
                             int(
                                 get_screen_width()
                                 - len(text_to_display)
-                                - len(ellipses)
+                                - len(busy_bar)
                             )
                             - 11
+                            - 11
+                            - 2
                         )
-                        whole_text_to_display = f"{text_to_display}{'#'*len_of_more_text_to_display}~[{find_range(start_time, time.time(),True)}]{ellipses}"
+                        whole_text_to_display = f"{text_to_display}{'#'*len_of_more_text_to_display} ~ Elapsed ({find_range(start_time, time.time(),True)}) [{busy_bar}]"
                         print(whole_text_to_display, end="\r")
+                        busy_bar = get_busy_bar(busy_bar)
 
                 print(
                     f"> Download completed successfully ({round(downloaded_size_in_bytes/ 1_000_000, 2)}MB, {find_range(start_time, time.time(), True)})"
@@ -375,7 +402,7 @@ def Auto(
             f"Limit should be 1 when you have specified filename of the item to be downloaded."
         )
     yt = Ytube(timeout=timeout)
-    y = yt.search_video_by_title(query)
+    y = yt.search_videos(query)
     if not y.items:
         raise Exception(f"Your query matched zero results")
     saved_to: list[Path] = []
@@ -390,12 +417,12 @@ def Auto(
                     "pip install ytube-api[cli]"
                 )
             if not click.confirm(
-                f'> Are you sure to download {item.duration} - "{item.title}" by "{item.channelTitle} ({count}/{len(y.items)})"'
+                f'> [{count}/{len(y.items)}] Are you sure to download "{item.title}" by "{item.channelTitle}" ({item.duration})'
             ):
                 continue
         d = yt.get_download_link(item, format=format, quality=quality)
         saved = yt.download(d, **kwargs)
         saved_to.append(saved)
-        if count >= limit + 1:
+        if count >= limit:
             break
     return saved_to[0] if len(saved_to) == 1 else saved_to

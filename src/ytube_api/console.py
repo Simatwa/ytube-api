@@ -77,8 +77,6 @@ def download(
     """Search and download video in mp4 or mp3 formats"""
     from ytube_api import Auto
 
-    print(channels)
-
     saved_to = Auto(
         query=query,
         format="mp4" if mp4 else "mp3",
@@ -93,11 +91,11 @@ def download(
         resume=resume,
         progress_bar=enable_progressbar,
     )
-    if not quiet:
+    if not quiet and saved_to:
         print(
-            "\n".join([str(path) for path in saved_to])
+            "## Saved to : \n" + "\n".join([str(path) for path in saved_to])
             if isinstance(saved_to, list)
-            else saved_to
+            else "## Saved to : " + str(saved_to)
         )
 
 
@@ -108,3 +106,6 @@ def main():
         print(
             f"> Error occured - {e.args[1] if e.args and len(e.args)>1 else e}. \nQuitting."
         )
+        from sys import exit
+
+        exit(1)
