@@ -4,7 +4,7 @@ import ytube_api.constants as const
 
 
 @click.group()
-@click.version_option(package_name='ytube-api')
+@click.version_option(package_name="ytube-api")
 def ytube():
     """Download YouTube videos in mp4 and mp3 formats"""
 
@@ -64,7 +64,11 @@ def download(query, quality, mp4, limit, timeout, dir, output, quiet, resume, co
         progress_bar=quiet,
     )
     if not quiet:
-        print("\n".join([str(path) for path in saved_to]) if isinstance(saved_to, list) else saved_to)
+        print(
+            "\n".join([str(path) for path in saved_to])
+            if isinstance(saved_to, list)
+            else saved_to
+        )
 
 
 def main():

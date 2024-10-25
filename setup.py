@@ -41,7 +41,15 @@ setup(
     install_requires=INSTALL_REQUIRE,
     extras_require=EXTRA_REQUIRE,
     python_requires=">=3.10",
-    keywords=["youtube", "ytdlp", "youtube-video-downloader"],
+    keywords=[
+        "ytube",
+        "ytube-api",
+        "y2mate",
+        "y2mate-api",
+        "youtube",
+        "ytdlp",
+        "youtube-video-downloader",
+    ],
     long_description=open("README.md", encoding="utf-8").read(),
     long_description_content_type="text/markdown",
     classifiers=[
