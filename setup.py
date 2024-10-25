@@ -16,7 +16,7 @@ EXTRA_REQUIRE = {
 
 setup(
     name="ytube-api",
-    version="0.0.1",
+    version="0.0.2",
     license="MIT",
     author="Smartwa",
     maintainer="Smartwa",
