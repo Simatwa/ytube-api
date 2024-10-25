@@ -4,6 +4,7 @@ import ytube_api.constants as const
 
 
 @click.group()
+@click.version_option(package_name='ytube-api')
 def ytube():
     """Download YouTube videos in mp4 and mp3 formats"""
 
