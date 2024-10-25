@@ -380,6 +380,7 @@ def Auto(
     limit: int = 1,
     confirm: bool = False,
     timeout: int = 20,
+    spinner_index: t.Literal[0, 1, 2, 3] = 2,
     channels: list[str] | tuple[str] = [],
     **kwargs,
 ) -> Path | list[Path]:
@@ -392,6 +393,7 @@ def Auto(
             limit (int, optional): Total number of videos to handle. Defaults to 1.
             confirm (bool, optional): Ask user permission to proceed with the download. Defaults to False.
             timeout (int, optional): Http request timeout. Defaults to 20.
+            spinner (int, optional): Download busybar index. Defaults to 2.
             channels (str, optional): Download videos posted by certain channel titles. Defaults to [].
         The rest are kwargs for `Ytube.download`
     Returns:
@@ -401,7 +403,7 @@ def Auto(
         raise RuntimeError(
             f"Limit should be 1 when you have specified filename of the item to be downloaded."
         )
-    yt = Ytube(timeout=timeout)
+    yt = Ytube(timeout=timeout, spinner_index=spinner_index)
     y = yt.search_videos(query)
     if not y.items:
         raise Exception(f"Your query matched zero results")

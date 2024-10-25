@@ -55,6 +55,16 @@ def ytube():
     default=getcwd(),
 )
 @click.option("-o", "--output", help="Filename to save the contents under - None")
+@click.option(
+    "-b",
+    "--busy-bar",
+    help="Busy bar index - ['', '/','■█■■■', '⡿'] - 2",
+    default=2,
+    type=click.IntRange(
+        min=0,
+        max=3,
+    ),
+)
 @click.option("--quiet", is_flag=True, help="Do not stdout informative messages")
 @click.option("--resume", is_flag=True, help="Resume incomplete download")
 @click.option(
@@ -70,6 +80,7 @@ def download(
     channels,
     dir,
     output,
+    busy_bar,
     quiet,
     resume,
     confirm,
@@ -84,6 +95,7 @@ def download(
         confirm=confirm,
         quality=quality,
         timeout=timeout,
+        spinner_index=busy_bar,
         channels=channels,
         filename=output,
         dir=dir,

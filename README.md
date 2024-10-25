@@ -166,6 +166,24 @@ Alternatively, you can download standalone executable for your system from [here
    /home/smartwa/git/smartwa/ytube-api/Alan Walker, Putri Ariani, Peder Elias - Who I Am (Official Music Video) - Alan Walker (youtube).mp3
    """
    ```
+### Query suggestions
+
+```python
+from ytube_api import Ytube
+yt = Ytube()
+
+suggestions = yt.suggest_queries(
+    'Hello wor'
+)
+
+print(
+    suggestions
+)
+
+"""
+['hello world', 'hello world song', 'hello world bump of chicken', 'hello world gwen stefani', 'hello worker', 'hello world louie zong', 'hello world in assembly language', 'hello world in different languages', 'hello world trailer', 'hello world english cover', 'hello world belle perez', 'hello world anime', 'hello world kekkai sensen', 'hello world lost game']
+"""
+```
 
 </details>
 
@@ -181,7 +199,7 @@ Alternatively, you can download standalone executable for your system from [here
    # e.g ytube download "Alan walker songs"
    ```
    
-   `$ ytube download --help`
+   _$ ytube download --help_
    
    ```
    Usage: ytube download [OPTIONS] QUERY
@@ -204,6 +222,8 @@ Options:
                                   pwd.
   -o, --output TEXT               Filename to save the contents under -
                                   None
+  -b, --busy-bar INTEGER RANGE    Busy bar index - ['', '/','■█■■■',
+                                  '⡿'] - 2  [0<=x<=3]
   --quiet                         Do not stdout informative messages
   --resume                        Resume incomplete download
   --confirm                       Ask user for permission to download a
