@@ -41,6 +41,13 @@ def ytube():
     default=20,
 )
 @click.option(
+    "-c",
+    "--channels",
+    help="Download videos posted by this channel titles - None.",
+    metavar="Name",
+    multiple=True,
+)
+@click.option(
     "-d",
     "--dir",
     help="Directory for saving the contents to - pwd.",
@@ -60,6 +67,7 @@ def download(
     enable_progressbar,
     limit,
     timeout,
+    channels,
     dir,
     output,
     quiet,
@@ -69,6 +77,8 @@ def download(
     """Search and download video in mp4 or mp3 formats"""
     from ytube_api import Auto
 
+    print(channels)
+
     saved_to = Auto(
         query=query,
         format="mp4" if mp4 else "mp3",
@@ -76,6 +86,7 @@ def download(
         confirm=confirm,
         quality=quality,
         timeout=timeout,
+        channels=channels,
         filename=output,
         dir=dir,
         quiet=quiet,

@@ -353,6 +353,7 @@ def Auto(
     limit: int = 1,
     confirm: bool = False,
     timeout: int = 20,
+    channels: list[str] | tuple[str] = [],
     **kwargs,
 ) -> Path | list[Path]:
     """Search, navigate and download first video of every results
@@ -364,6 +365,7 @@ def Auto(
             limit (int, optional): Total number of videos to handle. Defaults to 1.
             confirm (bool, optional): Ask user permission to proceed with the download. Defaults to False.
             timeout (int, optional): Http request timeout. Defaults to 20.
+            channels (str, optional): Download videos posted by certain channel titles. Defaults to [].
         The rest are kwargs for `Ytube.download`
     Returns:
           Path|list[Path] : Path where the file has been saved to
@@ -378,6 +380,8 @@ def Auto(
         raise Exception(f"Your query matched zero results")
     saved_to: list[Path] = []
     for count, item in enumerate(y.items, start=1):
+        if channels and item.channelTitle not in channels:
+            continue
         if confirm and not y.from_link:
             if not cli_deps_installed:
                 raise Exception(
