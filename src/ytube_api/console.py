@@ -90,9 +90,6 @@ def download(
     """Search and download video in mp4 or mp3 formats"""
     from ytube_api import Auto
 
-    print(quiet, busy_bar)
-    exit(1)
-
     saved_to = Auto(
         query=query,
         format="mp4" if mp4 else "mp3",
