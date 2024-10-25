@@ -75,6 +75,7 @@ def main():
     try:
         ytube()
     except Exception as e:
+        raise e
         print(
-            f"> Error occured - {e.args[1] if e.args and len(e.args)>1 else e}. \n\tQuitting."
+            f"> Error occured - {e.args[1] if e.args and len(e.args)>1 else e}. \nQuitting."
         )

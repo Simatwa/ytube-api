@@ -39,7 +39,7 @@ class TestYtube(unittest.TestCase):
         self.assertIsInstance(
             self.ytube.get_download_link(
                 item,
-                type="mp3",
+                format="mp3",
             ),
             models.DownloadLink,
         )
@@ -50,7 +50,7 @@ class TestYtube(unittest.TestCase):
         self.assertIsInstance(
             self.ytube.get_download_link(
                 item,
-                type="mp4",
+                format="mp4",
             ),
             models.DownloadLink,
         )
@@ -58,7 +58,7 @@ class TestYtube(unittest.TestCase):
     def test_mp3_download(self):
         item = self.ytube.search_video_by_title(self.query).items[0]
 
-        download_link = self.ytube.get_download_link(item, type="mp3", quality="128")
+        download_link = self.ytube.get_download_link(item, format="mp3", quality="128")
         saved_to = self.ytube.download(download_link, progress_bar=False)
         self.assertTrue(saved_to.exists() and saved_to.is_file())
         remove(saved_to)
@@ -66,7 +66,7 @@ class TestYtube(unittest.TestCase):
     def test_mp4_download(self):
         item = self.ytube.search_video_by_title(self.query).items[0]
 
-        download_link = self.ytube.get_download_link(item, type="mp4", quality="144")
+        download_link = self.ytube.get_download_link(item, format="mp4", quality="144")
         saved_to = self.ytube.download(download_link, progress_bar=False)
         self.assertTrue(saved_to.exists() and saved_to.is_file())
         remove(saved_to)

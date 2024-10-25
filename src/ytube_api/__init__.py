@@ -29,7 +29,7 @@ Auto(
 from ytube_api import Auto
 Auto(
   query = "Alan Walker - Alone",
-  type="mp3"
+  format="mp3"
 )
 ```
 
@@ -39,7 +39,7 @@ Auto(
 from ytube_api import Auto
 Auto(
   query = "Alan Walker - Alone",
-  type="mp3",
+  format="mp3",
   quality="320"
 )
 ```

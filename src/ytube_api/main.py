@@ -30,6 +30,8 @@ session = create_scraper()
 
 session.headers = const.request_headers
 
+type_ = type
+
 
 class Ytube:
     """This is the sole class for searching, navigating
@@ -140,7 +142,7 @@ class Ytube:
     def get_download_link(
         self,
         item: models.SearchResultsItem,
-        type: t.Literal["mp3", "mp4"] = "mp4",
+        format: t.Literal["mp3", "mp4"] = "mp4",
         quality: t.Literal[
             "128", "320", "144", "240", "360", "480", "720", "1080"
         ] = "128|720",
@@ -149,7 +151,7 @@ class Ytube:
 
         Args:
             item (models.SearchResultsItem): Item to download.
-            type (t.Literal['mp3', 'mp4'], optional): Media type. Defaults to 'mp4'.
+            format (t.Literal['mp3', 'mp4'], optional): Media format. Defaults to 'mp4'.
             quality (t.Literal['128',320', '144', '240', '360', '480', '720', '1080'], optional): Download quality. Defaults to '720|128'.
 
         Returns:
@@ -159,12 +161,12 @@ class Ytube:
             f"Item must be an instance of {models.SearchResultsItem} "
             f"not {type(item)}"
         )
-        assert type in [
+        assert format in [
             const.audio_download_type,
             const.video_download_type,
-        ], f"Type '{type}' is not one of {[const.audio_download_type, const.video_download_type],}"
+        ], f"Type '{format}' is not one of {[const.audio_download_type, const.video_download_type],}"
         if quality == "128|720":
-            if type == const.audio_download_type:
+            if format == const.audio_download_type:
                 quality = "128"
             else:
                 quality = "720"
@@ -172,15 +174,15 @@ class Ytube:
             assert (
                 quality in const.download_qualities
             ), f"Quality '{quality}' is not one of {const.download_qualities}"
-            if type == const.audio_download_type:
+            if format == const.audio_download_type:
                 assert (
                     quality in const.audio_download_qualities
                 ), f"Audio quality '{quality}' is not one of {const.audio_download_qualities}"
-            if type == const.video_download_type:
+            if format == const.video_download_type:
                 assert (
                     quality in const.video_download_qualities
                 ), f"Video quality '{quality}' is not one of {const.video_download_qualities}"
-        payload = dict(videoid=item.id, downtype=type, vquality=quality)
+        payload = dict(videoid=item.id, downtype=format, vquality=quality)
         resp_data = self.post(const.to_download_page_url, data=payload).json()
         if resp_data.get("status", "") == "error":
             raise exception.VideoProccessingError(
@@ -344,7 +346,7 @@ class Ytube:
 
 def Auto(
     query: str,
-    type: t.Literal["mp3", "mp4"] = "mp4",
+    format: t.Literal["mp3", "mp4"] = "mp4",
     quality: t.Literal[
         "128", "320", "144", "240", "360", "480", "720", "1080"
     ] = "128|720",
@@ -387,7 +389,7 @@ def Auto(
                 f'Are you sure to download "{item.title}" by "{item.channelTitle} : [{item.duration}]"'
             ):
                 continue
-        d = yt.get_download_link(item, type=type, quality=quality)
+        d = yt.get_download_link(item, format=format, quality=quality)
         saved_to.append(yt.download(d, **kwargs))
         if count >= limit:
             break

@@ -3,7 +3,7 @@
 <p align="center">
 <a href="#"><img alt="Python version" src="https://img.shields.io/pypi/pyversions/ytube-api"/></a>
 <a href="https://github.com/Simatwa/ytube-api/actions/workflows/python-test.yml"><img src="https://github.com/Simatwa/ytube-api/actions/workflows/python-test.yml/badge.svg" alt="Python Test"/></a>
-<a href="LICENSE"><img alt="License" src="https://img.shields.io/static/v1?logo=GPL&color=Blue&message=GPLv3&label=License"/></a>
+<a href="LICENSE"><img alt="License" src="https://img.shields.io/static/v1?logo=MIT&color=Blue&message=MIT&label=License"/></a>
 <a href="https://pypi.org/project/ytube-api"><img alt="PyPi" src="https://img.shields.io/pypi/v/ytube-api"></a>
 <a href="https://github.com/Simatwa/ytube-api/releases"><img src="https://img.shields.io/github/v/release/Simatwa/ytube-api?label=Release&logo=github" alt="Latest release"></img></a>
 <a href="https://github.com/Simatwa/ytube-api/releases"><img src="https://img.shields.io/github/release-date/Simatwa/ytube-api?label=Release date&logo=github" alt="release date"></img></a>
