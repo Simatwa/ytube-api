@@ -2,6 +2,8 @@ import click
 from os import getcwd
 import ytube_api.constants as const
 
+default_context_settings = dict(auto_envvar_prefix="YTUBE")
+
 
 @click.group()
 @click.version_option(package_name="ytube-api")
@@ -9,7 +11,7 @@ def ytube():
     """Download YouTube videos in mp4 and mp3 formats"""
 
 
-@ytube.command()
+@ytube.command(context_settings=default_context_settings)
 @click.argument("query")
 @click.option(
     "-q",
@@ -87,6 +89,9 @@ def download(
 ):
     """Search and download video in mp4 or mp3 formats"""
     from ytube_api import Auto
+
+    print(quiet, busy_bar)
+    exit(1)
 
     saved_to = Auto(
         query=query,
