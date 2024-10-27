@@ -199,6 +199,8 @@ print(
    $ ytube download <QUERY>
    # e.g ytube download "Alan walker songs"
    ```
+   > [!TIP]
+   > You can use `python -m pytube_api` instead of `ytube`.
    
    _$ ytube download --help_
    
