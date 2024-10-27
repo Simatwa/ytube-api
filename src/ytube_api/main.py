@@ -117,7 +117,7 @@ class Ytube:
         """Check if query contains youtube video id
 
         Args:
-            query (str): Search query
+            query (str): Search query - video title | video url | video id
 
         Returns:
             None|str: Video ID or None
@@ -151,9 +151,14 @@ class Ytube:
         results_items: list[models.SearchResultsItem] = []
         for item in results["items"]:
             results_items.append(models.SearchResultsItem(**item))
-        return models.SearchResults(
+        search_results = models.SearchResults(
             query=re.sub(r"\+", " ", results["query"]), items=results_items
         )
+        if not search_results.items:
+            raise exception.ZeroSearchResults(
+                f"Your query '{query}' matched zero videos"
+            )
+        return search_results
 
     def get_download_link(
         self,
@@ -274,8 +279,15 @@ class Ytube:
             current_downloaded_size_in_mb = current_downloaded_size / 1_000_000
 
         default_content_length = 0
-
+        session.headers["referer"] = "https://yja7.mmnm.store/"
         resp = session.get(media_file_url, stream=True)
+        session.headers.pop("referer")
+        if not resp.headers.get("content-disposition"):
+            raise exception.MediaDownloadError(
+                "Server returned unknown response while expecting a media content - "
+                f"({resp.status_code}, {resp.reason}) - {resp.text}"
+            )
+
         size_in_bytes = int(resp.headers.get("content-length", default_content_length))
         if not size_in_bytes:
             if resume:
@@ -387,7 +399,7 @@ def Auto(
     """Search, navigate and download first video of every results
 
     Args:
-        query (str): Video title or video url
+        query (str): Video title or video url or video id.
             format (t.Literal['mp3', 'mp4'], optional): Media type. Defaults to 'mp4'.
             quality (t.Literal['128',320', '144', '240', '360', '480', '720', '1080'], optional): Download quality. Defaults to '720|128'.
             limit (int, optional): Total number of videos to handle. Defaults to 1.
@@ -405,8 +417,6 @@ def Auto(
         )
     yt = Ytube(timeout=timeout, spinner_index=spinner_index)
     y = yt.search_videos(query)
-    if not y.items:
-        raise Exception(f"Your query matched zero results")
     saved_to: list[Path] = []
     for count, item in enumerate(y.items, start=1):
         if channels and item.channelTitle not in channels:
