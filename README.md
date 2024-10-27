@@ -211,8 +211,8 @@ Commands:
 
 ```
 
-   > [!TIP]
-   > Shorthand for `python -m pytube_api` is `pytube`.
+> [!TIP]
+> Shorthand for `python -m pytube_api` is `pytube`.
 
 ### Download
 
