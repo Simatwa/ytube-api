@@ -44,10 +44,11 @@ class Ytube:
             spinner (int, optional): Download busybar index. Defaults to 2.
         """
         self.request_timeout = timeout
+        # fix captured so as it match even \W
         self.video_id_patterns = (
-            r"^https://youtu.be/(\w{11}).*",
-            r"^https://www.youtube.com/watch\?v=(\w{11}).*",
-            r"^https://youtube.com/shorts/(\w{11}).*",
+            r"^https://youtu.be/([\w+\W*]{11}).*",
+            r"^https://www.youtube.com/watch\?v=([\w+\W*]{11}).*",
+            r"^https://youtube.com/shorts/([\w+\W*]{11}).*",
             r"^(\w{11})$",
         )
         __spinner = (
@@ -187,9 +188,9 @@ class Ytube:
         ), f"Format '{format}' is not one of {[const.audio_download_format, const.video_download_format],}"
         if quality == "128|720":
             if format == const.audio_download_format:
-                quality = "128"
+                quality = const.default_audio_download_quality
             else:
-                quality = "720"
+                quality = const.default_video_download_quality
         else:
             assert (
                 quality in const.download_qualities
@@ -227,6 +228,7 @@ class Ytube:
         leave: bool = True,
         colour: str = "cyan",
         simple: bool = False,
+        experiment: bool = False,
     ):
         """Donload and save the media in disk
         Args:
@@ -240,6 +242,7 @@ class Ytube:
             leave (bool, optional): Keep all traces of the progressbar. Defaults to True.
             colour (str, optional): Progress bar display color. Defaults to "cyan".
             simple (bool, optional): Show percentage and bar only in progressbar. Deafults to False.
+            experiment (bool, optional): Enable features that are known to be buggy. Defaults to False.
 
         Raises:
             FileExistsError:  Incase of `resume=True` but the download was complete
@@ -248,6 +251,12 @@ class Ytube:
         Returns:
             str: Path where the movie contents have been saved to.
         """
+        if resume and not experiment:
+            raise Exception(
+                f"Cannot resume incomplete downloads in the moment. "
+                "However, you can bypass this by activating experimental features by "
+                "using --experiment flag in CLI or parameter experiment=True"
+            )
         assert isinstance(download_link, models.DownloadLink), (
             f"download_link must be an instance of {models.DownloadLink} "
             f"not {type(download_link)}"
@@ -290,10 +299,14 @@ class Ytube:
 
         size_in_bytes = int(resp.headers.get("content-length", default_content_length))
         if not size_in_bytes:
+            pass
+            # server doesn't respond with content-length; this wont be relevant
+            """
             if resume:
                 raise FileExistsError(
                     f"Download completed for the file in path - '{save_to}'"
                 )
+            """
 
         if resume:
             assert (
@@ -307,8 +320,11 @@ class Ytube:
         if progress_bar:
             if not quiet:
                 print(f"{filename}")
-            if not size_in_bytes:
-                # Prevent tqdm from showing progressbar
+            # if not size_in_bytes:
+            # Prevent tqdm from showing progressbar
+            if (
+                not experiment
+            ):  # Just a hack to ensure tqdm doesn't handle this by default
 
                 def find_range(start, end, hms: bool = False):
                     in_seconds = round(end - start, 1)
@@ -327,7 +343,7 @@ class Ytube:
                         # Fallback for older Python versions
                         return environ.get("COLUMNS", 80)
 
-                downloaded_size_in_bytes = 0
+                downloaded_size_in_bytes = current_downloaded_size
                 start_time = time.time()
                 busy_bar = "" if not self._spinner_items else self._spinner_items[0]
                 with open(save_to, saving_mode) as fh:
@@ -341,9 +357,7 @@ class Ytube:
                                 - len(text_to_display)
                                 - len(busy_bar)
                             )
-                            - 11
-                            - 11
-                            - 2
+                            - 24
                         )
                         whole_text_to_display = f"{text_to_display}{'#'*len_of_more_text_to_display} ~ Elapsed ({find_range(start_time, time.time(),True)}) [{busy_bar}]"
                         print(whole_text_to_display, end="\r")

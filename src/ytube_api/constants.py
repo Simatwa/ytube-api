@@ -27,11 +27,17 @@ to downloadable media file and other metadata"""
 video_download_qualities: tuple[str] = ("144", "240", "360", "480", "720", "1080")
 """Video download qaulities without p"""
 
+default_video_download_quality = "720"
+""""""
+
 audio_download_qualities: tuple[str] = ("128", "320")
 """Audio download qualities without Kbps"""
 
+default_audio_download_quality = "128"
+""""""
+
 download_qualities: tuple[str] = tuple(
-    audio_download_qualities + video_download_qualities
+    audio_download_qualities + video_download_qualities + ("128|720",)
 )
 """Combined video and audio download qualities """
 
@@ -40,6 +46,11 @@ video_download_format = "mp4"
 
 audio_download_format = "mp3"
 """String for specifying audio"""
+
+format_quality_map: dict[str, tuple[str]] = {
+    video_download_format: video_download_qualities,
+    audio_download_format: audio_download_qualities,
+}
 
 download_formats: tuple[str] = (video_download_format, audio_download_format)
 """Combined  audio and video specifiers"""

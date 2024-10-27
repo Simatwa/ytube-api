@@ -7,7 +7,11 @@ INSTALL_REQUIRE = [
     "tqdm==4.66.3",
 ]
 
-cli_reqs = ["click==8.1.3", "rich==13.9.2"]
+cli_reqs = [
+    "click==8.1.3",
+    "rich==13.9.2",
+    "prompt-toolkit==3.0.48",
+]
 
 EXTRA_REQUIRE = {
     "cli": cli_reqs,
@@ -16,7 +20,7 @@ EXTRA_REQUIRE = {
 
 setup(
     name="ytube-api",
-    version="0.0.5",
+    version="0.0.4",
     license="MIT",
     author="Smartwa",
     maintainer="Smartwa",

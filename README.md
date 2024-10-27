@@ -193,14 +193,33 @@ print(
    <h2>2. CLI</h2>
   </summary>
 
+`$ python -m ytube_api --help`
+
+```
+Usage: ytube [OPTIONS] COMMAND [ARGS]...
+
+  Download YouTube videos in mp4 and mp3 formats
+
+Options:
+  --version  Show the version and exit.
+  --help     Show this message and exit.
+
+Commands:
+  download     Search and download video in mp4 or mp3 formats
+  interactive  Search and download videos/audio interactively
+  suggest      Suggest videos based on your query
+
+```
+
+   > [!TIP]
+   > Shorthand for `python -m pytube_api` is `pytube`.
+
 ### Download
 
    ```sh
    $ ytube download <QUERY>
    # e.g ytube download "Alan walker songs"
    ```
-   > [!TIP]
-   > You can use `python -m pytube_api` instead of `ytube`.
    
    _$ ytube download --help_
    
@@ -234,6 +253,60 @@ Options:
   --help                          Show this message and exit.
 
    ```
+
+## Interactive
+
+- Features live search 🔴 etc.
+
+```
+Welcome to interactive ytube. Type 'help' or 'h' for usage info.
+Submit any bug at https://github.com/Simatwa/ytube/issues/new
+╭─[Smartwa@YTUBE]~[🕒18:07:27-💻00:00:00-⚡0.0s] 
+╰─>Alan Walker
+               alan walker                 
+               alan walker faded           
+               alan walker on my way live  
+               alan walker sad sometimes   
+               alan walker spectre         
+               alan walker alone           
+               alan walker mix             
+
+```
+
+<details>
+<summary><code>ytube interactive --help</code></summary>
+
+```
+Usage: ytube interactive [OPTIONS] [QUERY]
+
+  Search and download videos/audio interactively
+
+Options:
+  -q, --quality [128|320|144|240|360|480|720|1080|128|720|128|720]
+                                  Media download quality - 128|720
+  --mp4 / --mp3                   Download audio (mp3) or video (mp4) -
+                                  mp4
+  -s, --suggestions-limit INTEGER
+                                  Query suggestions limit - 10
+  -l, --limit INTEGER             Total number of items to be downloaded
+                                  that matched the search - 1
+  -t, --timeout INTEGER           Http request timeout - 20
+  -b, --busy-bar INTEGER RANGE    Busy bar index - ['', '/','■█■■■',
+                                  '⡿'] - 2  [0<=x<=3]
+  -d, --dir DIRECTORY             Directory for saving the contents to -
+                                  pwd.
+  --disable-coloring              Stdout interactive texts in white font
+                                  color
+  --select                        Prompt user download format and
+                                  quality every time.
+  --confirm                       Ask user for permission to download a
+                                  video/audio
+  --play                          Play the video/audio after completing
+                                  download process
+  --help                          Show this message and exit.
+```
+
+</details>
 
 </details>
 
