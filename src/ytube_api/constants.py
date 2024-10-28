@@ -62,3 +62,6 @@ request_headers: dict[str, str] = {
     "Accept-Language": "en-US,en;q=0.9",
 }
 """Http request headers"""
+
+request_referer = "https://yja7.mmnm.store/"
+"""Referer value in request headers"""

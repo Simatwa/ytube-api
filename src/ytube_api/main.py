@@ -288,7 +288,7 @@ class Ytube:
             current_downloaded_size_in_mb = current_downloaded_size / 1_000_000
 
         default_content_length = 0
-        session.headers["referer"] = "https://yja7.mmnm.store/"
+        session.headers["referer"] = const.request_referer
         resp = session.get(media_file_url, stream=True)
         session.headers.pop("referer")
         if not resp.headers.get("content-disposition"):
@@ -362,7 +362,9 @@ class Ytube:
                         busy_bar = get_busy_bar(busy_bar)
 
                 print(
-                    f"> Download completed successfully ({round(downloaded_size_in_bytes/ 1_000_000, 2)}MB, {find_range(start_time, time.time(), True)})"
+                    "",
+                    f"> Download completed successfully ({round(downloaded_size_in_bytes/ 1_000_000, 2)}MB, {find_range(start_time, time.time(), True)})",
+                    sep="\n",
                 )
                 return save_to
 
