@@ -39,7 +39,7 @@ Auto(
 
 # Prequisite
 
-- [x] [Python>=3.10](https://python.org) (optional)
+- [x] [Python>=3.9](https://python.org) (optional)
 
 # Installation
 
@@ -307,11 +307,11 @@ Options:
   --help                          Show this message and exit.
 ```
 
-> [!TIP]
-> i**Interactive** is the default option incase no command/argument is supplied.
-> `$ ytube` is enough to kickoff.
-
 </details>
+
+> [!NOTE]
+> **Interactive** is the default option incase no command/argument is supplied.
+> `$ ytube` is enough to kickoff.
 
 </details>
 
