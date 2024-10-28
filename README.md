@@ -37,7 +37,7 @@ Auto(
 # ## Saved to : /home/smartwa/y2mate/Alan Walker - Alone - Alan Walker (youtube).mp3
 ```
 
-# Prequisite
+# Pre-requisite
 
 - [x] [Python>=3.9](https://python.org) (optional)
 
@@ -212,7 +212,7 @@ Commands:
 
 ```
 
-> [!TIP]
+> [!NOTE]
 > Shorthand for `python -m pytube_api` is `pytube`.
 
 ### Download
