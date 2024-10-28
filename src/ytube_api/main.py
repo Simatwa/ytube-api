@@ -341,7 +341,7 @@ class Ytube:
                         return shutil.get_terminal_size().columns
                     except AttributeError:
                         # Fallback for older Python versions
-                        return environ.get("COLUMNS", 80)
+                        return int(environ.get("COLUMNS", 80))
 
                 downloaded_size_in_bytes = current_downloaded_size
                 start_time = time.time()
@@ -352,11 +352,9 @@ class Ytube:
                         downloaded_size_in_bytes += len(chunks)
                         text_to_display = f"> Downloaded {round(downloaded_size_in_bytes / 1_000_000, 2)} MB "
                         len_of_more_text_to_display = (
-                            int(
-                                get_screen_width()
-                                - len(text_to_display)
-                                - len(busy_bar)
-                            )
+                            get_screen_width()
+                            - len(text_to_display)
+                            - len(busy_bar)
                             - 24
                         )
                         whole_text_to_display = f"{text_to_display}{'#'*len_of_more_text_to_display} ~ Elapsed ({find_range(start_time, time.time(),True)}) [{busy_bar}]"

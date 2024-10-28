@@ -680,6 +680,9 @@ def main():
     try:
         ytube.add_command(Commands.interactive)
         ytube.add_command(Commands.suggest)
+        if len(sys.argv) == 1:
+            # Just a hack to make 'interactive' default command
+            sys.argv.append("interactive")
         ytube()
     except Exception as e:
         print(

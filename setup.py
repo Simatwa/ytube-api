@@ -11,6 +11,7 @@ cli_reqs = [
     "click==8.1.3",
     "rich==13.9.2",
     "prompt-toolkit==3.0.48",
+    "colorama==0.4.6",
 ]
 
 EXTRA_REQUIRE = {
@@ -20,7 +21,7 @@ EXTRA_REQUIRE = {
 
 setup(
     name="ytube-api",
-    version="0.0.6",
+    version="0.0.7",
     license="MIT",
     author="Smartwa",
     maintainer="Smartwa",
@@ -44,7 +45,7 @@ setup(
     },
     install_requires=INSTALL_REQUIRE,
     extras_require=EXTRA_REQUIRE,
-    python_requires=">=3.10",
+    python_requires=">=3.9",
     keywords=[
         "ytube",
         "ytube-api",

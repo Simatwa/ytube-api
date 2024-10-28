@@ -39,7 +39,7 @@ Auto(
 
 # Prequisite
 
-- [*] [Python>=3.10](https://python.org) (optional)
+- [x] [Python>=3.10](https://python.org) (optional)
 
 # Installation
 
@@ -48,11 +48,11 @@ Either of the following ways will get you ready.
 1. From pypi:
 
    ```sh
-   $ pip install ytube-api[cli]
+   $ pip install -U "ytube-api[cli]"
    ```
 
 2. From source:
-   
+
    ```sh
    $ pip install git+http://github.com/Simatwa/ytube-api.git
    ```
@@ -167,6 +167,7 @@ Alternatively, you can download standalone executable for your system from [here
    /home/smartwa/git/smartwa/ytube-api/Alan Walker, Putri Ariani, Peder Elias - Who I Am (Official Music Video) - Alan Walker (youtube).mp3
    """
    ```
+
 ### Query suggestions
 
 ```python
@@ -305,6 +306,10 @@ Options:
                                   download process
   --help                          Show this message and exit.
 ```
+
+> [!TIP]
+> i**Interactive** is the default option incase no command/argument is supplied.
+> `$ ytube` is enough to kickoff.
 
 </details>
 
