@@ -362,7 +362,7 @@ class Interactive(cmd.Cmd):
 
                 self.old_completer = readline.get_completer()
                 readline.set_completer(self.complete)
-                if readline.backend == "editline":
+                if hasattr(readline, "backend") and readline.backend == "editline":
                     if self.completekey == "tab":
                         # libedit uses "^I" instead of "tab"
                         command_string = "bind ^I rl_complete"
