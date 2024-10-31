@@ -114,7 +114,7 @@ class Ytube:
             text,
         )
 
-    def extract_video_id(self, query: str) -> None | str:
+    def extract_video_id(self, query: str) -> t.Union[None, str]:
         """Check if query contains youtube video id
 
         Args:
@@ -219,7 +219,7 @@ class Ytube:
     def download(
         self,
         download_link: models.DownloadLink,
-        filename: str | Path = None,
+        filename: t.Union[str, Path] = None,
         dir: str = getcwd(),
         progress_bar=True,
         quiet: bool = False,
@@ -407,9 +407,9 @@ def Auto(
     confirm: bool = False,
     timeout: int = 20,
     spinner_index: t.Literal[0, 1, 2, 3] = 2,
-    channels: list[str] | tuple[str] = [],
+    channels: t.Union[list[str], tuple[str]] = [],
     **kwargs,
-) -> Path | list[Path]:
+) -> t.Union[Path, list[Path]]:
     """Search, navigate and download first video of every results
 
     Args:
