@@ -11,6 +11,7 @@ import logging
 import datetime
 import typing as t
 from tqdm import tqdm
+from functools import lru_cache
 from pathlib import Path
 from os import getcwd, path, environ
 from cloudscraper import create_scraper
@@ -104,7 +105,8 @@ class Ytube:
                 f"not {type(item)}"
             )
         return self.get(const.video_thumbnail_url % dict(video_id=item.id)).content
-
+    
+    @lru_cache()
     def suggest_queries(self, query: str) -> list[str]:
         """Suggest search queries"""
         text = self.get(const.suggest_queries_url % dict(query=query)).text
