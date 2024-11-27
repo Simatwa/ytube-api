@@ -105,7 +105,7 @@ class Ytube:
                 f"not {type(item)}"
             )
         return self.get(const.video_thumbnail_url % dict(video_id=item.id)).content
-    
+
     @lru_cache()
     def suggest_queries(self, query: str) -> list[str]:
         """Suggest search queries"""
@@ -206,8 +206,13 @@ class Ytube:
                     quality in const.video_download_qualities
                 ), f"Video quality '{quality}' is not one of {const.video_download_qualities}"
         payload = dict(videoid=item.id, downtype=format, vquality=quality)
-        resp_data = self.post(const.to_download_links_url, data=payload).json()
-        if resp_data.get("status", "") == "error":
+        resp = self.post(const.to_download_links_url, data=payload)
+        resp_data: dict = resp.json()
+        if (
+            not resp.ok
+            or resp_data.get("status", "") == "error"
+            or resp_data.get("error")
+        ):
             raise exception.VideoProccessingError(
                 str(
                     resp_data.get(
