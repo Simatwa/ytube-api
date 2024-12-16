@@ -20,7 +20,7 @@ requires `query` to be complete
 video_thumbnail_url = "https://i.ytimg.com/vi/%(video_id)s/0.jpg"
 """Link template to a Youtube video thumbnail"""
 
-to_download_links_url = "https://sogv.mmnm.store/oajax.php"
+to_download_links_url = "https://iframe.y2meta-uk.com/oajax.php"
 """Post request is made to this endpoint so as to generate link
 to downloadable media file and other metadata"""
 
@@ -63,5 +63,5 @@ request_headers: dict[str, str] = {
 }
 """Http request headers"""
 
-request_referer = "https://yja7.mmnm.store/"
+request_referer = "https://iframe.y2meta-uk.com/"
 """Referer value in request headers"""
