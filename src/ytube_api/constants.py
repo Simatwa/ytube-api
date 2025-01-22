@@ -20,10 +20,6 @@ requires `query` to be complete
 video_thumbnail_url = "https://i.ytimg.com/vi/%(video_id)s/0.jpg"
 """Link template to a Youtube video thumbnail"""
 
-to_download_links_url = "https://iframe.y2meta-uk.com/oajax.php"
-"""Post request is made to this endpoint so as to generate link
-to downloadable media file and other metadata"""
-
 video_download_qualities: tuple[str] = ("144", "240", "360", "480", "720", "1080")
 """Video download qaulities without p"""
 
@@ -55,13 +51,25 @@ format_quality_map: dict[str, tuple[str]] = {
 download_formats: tuple[str] = (video_download_format, audio_download_format)
 """Combined  audio and video specifiers"""
 
+request_key_endpoint = "https://api.mp3youtube.cc/v2/sanity/key"
+"""Where download keys are secured from"""
+
+initiate_download_endpoint = "https://api.mp3youtube.cc/v2/converter"
+"""Where POST request is made to initiate download process"""
+
+request_header_origin = "https://iframe.y2meta-uk.com"
+"""Value for 'Origin' key in request headers"""
+
+request_referer = request_header_origin + "/"
+"""Referer value in request headers"""
+
 request_headers: dict[str, str] = {
-    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/png,image/svg+xml,*/*;q=0.8",
-    "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:129.0) Gecko/20100101 Firefox/129.0",
-    "Accept-Encoding": "gzip, deflate",
-    "Accept-Language": "en-US,en;q=0.9",
+    # "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/png,image/svg+xml,*/*;q=0.8",
+    "Accept": "*/*",
+    "Content-Type": "application/json",
+    # "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:129.0) Gecko/20100101 Firefox/129.0",
+    # "Accept-Language": "en-US,en;q=0.9",
+    "Origin": request_header_origin,
+    "Referer": request_referer,
 }
 """Http request headers"""
-
-request_referer = "https://iframe.y2meta-uk.com/"
-"""Referer value in request headers"""

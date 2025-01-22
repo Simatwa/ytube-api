@@ -69,6 +69,25 @@ class Ytube:
             raise ValueError(f"spinner_index must be >=0 or <=3 not {spinner_index}")
         self._spinner_items = __spinner[spinner_index]
 
+        self._download_key = None
+
+    @property
+    def get_download_key(self) -> str:
+        """Value for 'key' in download initiation request header.
+
+        Returns:
+            str: Long str
+        """
+
+        def get_new_key():
+            resp = session.get(const.request_key_endpoint, timeout=self.request_timeout)
+            resp.raise_for_status()
+            key = resp.json()["key"]
+            self._download_key = key
+            return key
+
+        return self._download_key or get_new_key()
+
     def get(self, *args, **kwargs) -> Response:
         """Fetch online resource
 
@@ -188,11 +207,14 @@ class Ytube:
         assert (
             format in const.download_formats
         ), f"Format '{format}' is not one of {[const.audio_download_format, const.video_download_format],}"
+        audio_bitrate = "128"
+        video_quality = "720"
+
         if quality == "128|720":
             if format == const.audio_download_format:
-                quality = const.default_audio_download_quality
+                audio_bitrate = const.default_audio_download_quality
             else:
-                quality = const.default_video_download_quality
+                video_quality = const.default_video_download_quality
         else:
             assert (
                 quality in const.download_qualities
@@ -201,12 +223,28 @@ class Ytube:
                 assert (
                     quality in const.audio_download_qualities
                 ), f"Audio quality '{quality}' is not one of {const.audio_download_qualities}"
+                audio_bitrate = quality
+
             if format == const.video_download_format:
                 assert (
                     quality in const.video_download_qualities
                 ), f"Video quality '{quality}' is not one of {const.video_download_qualities}"
-        payload = dict(videoid=item.id, downtype=format, vquality=quality)
-        resp = self.post(const.to_download_links_url, data=payload)
+                video_quality = quality
+
+        payload = dict(
+            link="https://youtu.be/" + item.id,
+            format=format,
+            audioBitrate=audio_bitrate,
+            videoQuality=video_quality,
+            vCodec="h264",
+        )
+        custom_headers = const.request_headers.copy()
+        custom_headers["key"] = self.get_download_key
+        resp = self.post(
+            const.initiate_download_endpoint,
+            json=payload,
+            headers=custom_headers,
+        )
         resp_data: dict = resp.json()
         if (
             not resp.ok
@@ -261,7 +299,7 @@ class Ytube:
         if resume and not experiment:
             raise Exception(
                 f"Cannot resume incomplete downloads in the moment. "
-                "However, you can bypass this by activating experimental features by "
+                "However, you can bypass this by activating experimental features "
                 "using --experiment flag in CLI or parameter experiment=True"
             )
         assert isinstance(download_link, models.DownloadLink), (
