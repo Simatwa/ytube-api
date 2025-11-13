@@ -19,6 +19,7 @@ from requests import Response
 import ytube_api.constants as const
 import ytube_api.models as models
 import ytube_api.exceptions as exception
+from ytube_api.utils import sanitize_filename
 
 try:
     import click
@@ -275,7 +276,7 @@ class Ytube:
         simple: bool = False,
         experiment: bool = False,
     ):
-        """Donload and save the media in disk
+        """Download and save the media in disk
         Args:
             download_link (models.DownloadLink): Downloadlink
             filename (str|Path): Filename to save the downloaded contents under.
@@ -298,7 +299,7 @@ class Ytube:
         """
         if resume and not experiment:
             raise Exception(
-                f"Cannot resume incomplete downloads in the moment. "
+                "Cannot resume incomplete downloads in the moment. "
                 "However, you can bypass this by activating experimental features "
                 "using --experiment flag in CLI or parameter experiment=True"
             )
@@ -309,7 +310,7 @@ class Ytube:
         current_downloaded_size = 0
         current_downloaded_size_in_mb = 0
         filename = filename or download_link.filename
-        save_to = Path(dir) / filename
+        save_to = Path(dir) / sanitize_filename(filename)
         media_file_url = download_link.url
 
         def pop_range_in_session_headers():
@@ -472,7 +473,7 @@ def Auto(
     """
     if kwargs.get("filename") and limit > 1:
         raise RuntimeError(
-            f"Limit should be 1 when you have specified filename of the item to be downloaded."
+            "Limit should be 1 when you have specified filename of the item to be downloaded."
         )
     yt = Ytube(timeout=timeout, spinner_index=spinner_index)
     y = yt.search_videos(query)
@@ -483,8 +484,8 @@ def Auto(
         if confirm and not y.from_link:
             if not cli_deps_installed:
                 raise Exception(
-                    f"Looks like cli dependencies are not installed. "
-                    f"Reinstall ytube-api along with cli extras ie. "
+                    "Looks like cli dependencies are not installed. "
+                    "Reinstall ytube-api along with cli extras ie. "
                     "pip install ytube-api[cli]"
                 )
             if not click.confirm(
