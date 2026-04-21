@@ -51,10 +51,10 @@ format_quality_map: dict[str, tuple[str]] = {
 download_formats: tuple[str] = (video_download_format, audio_download_format)
 """Combined  audio and video specifiers"""
 
-request_key_endpoint = "https://api.mp3youtube.cc/v2/sanity/key"
+request_key_endpoint = "https://cnv.cx/v2/sanity/key"
 """Where download keys are secured from"""
 
-initiate_download_endpoint = "https://api.mp3youtube.cc/v2/converter"
+initiate_download_endpoint = "https://cnv.cx/v2/converter"
 """Where POST request is made to initiate download process"""
 
 request_header_origin = "https://iframe.y2meta-uk.com"

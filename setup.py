@@ -16,7 +16,7 @@ cli_reqs = [
 
 EXTRA_REQUIRE = {
     "cli": cli_reqs,
-    "all": cli_reqs + [],
+    "all": cli_reqs + ["requests[socks]"],
 }
 
 setup(

@@ -202,12 +202,11 @@ class Ytube:
             models.DownloadLink: Download link and other metadata
         """
         assert isinstance(item, models.SearchResultsItem), (
-            f"Item must be an instance of {models.SearchResultsItem} "
-            f"not {type(item)}"
+            f"Item must be an instance of {models.SearchResultsItem} not {type(item)}"
         )
-        assert (
-            format in const.download_formats
-        ), f"Format '{format}' is not one of {[const.audio_download_format, const.video_download_format],}"
+        assert format in const.download_formats, (
+            f"Format '{format}' is not one of {([const.audio_download_format, const.video_download_format],)}"
+        )
         audio_bitrate = "128"
         video_quality = "720"
 
@@ -217,28 +216,29 @@ class Ytube:
             else:
                 video_quality = const.default_video_download_quality
         else:
-            assert (
-                quality in const.download_qualities
-            ), f"Quality '{quality}' is not one of {const.download_qualities}"
+            assert quality in const.download_qualities, (
+                f"Quality '{quality}' is not one of {const.download_qualities}"
+            )
             if format == const.audio_download_format:
-                assert (
-                    quality in const.audio_download_qualities
-                ), f"Audio quality '{quality}' is not one of {const.audio_download_qualities}"
+                assert quality in const.audio_download_qualities, (
+                    f"Audio quality '{quality}' is not one of {const.audio_download_qualities}"
+                )
                 audio_bitrate = quality
 
             if format == const.video_download_format:
-                assert (
-                    quality in const.video_download_qualities
-                ), f"Video quality '{quality}' is not one of {const.video_download_qualities}"
+                assert quality in const.video_download_qualities, (
+                    f"Video quality '{quality}' is not one of {const.video_download_qualities}"
+                )
                 video_quality = quality
 
-        payload = dict(
-            link="https://youtu.be/" + item.id,
-            format=format,
-            audioBitrate=audio_bitrate,
-            videoQuality=video_quality,
-            vCodec="h264",
-        )
+        payload = {
+            "link": "https://youtu.be/" + item.id,
+            "format": format,
+            "audioBitrate": audio_bitrate,
+            "videoQuality": video_quality,
+            "vCodec": "h264",
+            "filenameStyle": "pretty",
+        }
         custom_headers = const.request_headers.copy()
         custom_headers["key"] = self.get_download_key
         resp = self.post(
@@ -355,9 +355,9 @@ class Ytube:
             """
 
         if resume:
-            assert (
-                size_in_bytes != current_downloaded_size
-            ), f"Download completed for the file in path - '{save_to}'"
+            assert size_in_bytes != current_downloaded_size, (
+                f"Download completed for the file in path - '{save_to}'"
+            )
 
         size_in_mb = (size_in_bytes / 1_000_000) + current_downloaded_size_in_mb
         chunk_size_in_bytes = chunk_size * 1_000
@@ -403,13 +403,13 @@ class Ytube:
                             - len(busy_bar)
                             - 24
                         )
-                        whole_text_to_display = f"{text_to_display}{'#'*len_of_more_text_to_display} ~ Elapsed ({find_range(start_time, time.time(),True)}) [{busy_bar}]"
+                        whole_text_to_display = f"{text_to_display}{'#' * len_of_more_text_to_display} ~ Elapsed ({find_range(start_time, time.time(), True)}) [{busy_bar}]"
                         print(whole_text_to_display, end="\r")
                         busy_bar = get_busy_bar(busy_bar)
 
                 print(
                     "",
-                    f"> Download completed successfully ({round(downloaded_size_in_bytes/ 1_000_000, 2)}MB, {find_range(start_time, time.time(), True)})",
+                    f"> Download completed successfully ({round(downloaded_size_in_bytes / 1_000_000, 2)}MB, {find_range(start_time, time.time(), True)})",
                     sep="\n",
                 )
                 return save_to
