@@ -43,7 +43,6 @@ Auto(
   quality="320"
 )
 ```
-
 """
 
 from ytube_api.main import Ytube, Auto

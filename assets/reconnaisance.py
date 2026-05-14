@@ -36,9 +36,11 @@ def get_key():
     resp = session.get(request_key_endpoint, headers=request_headers)
     resp.raise_for_status()
     json_response: dict = resp.json()
+
     assert (
         "key" in json_response.keys()
     ), f"Failed to fetch keys {resp.status_code, resp.reason} - {json_response}"
+    
     return resp.json()["key"]
 
 
